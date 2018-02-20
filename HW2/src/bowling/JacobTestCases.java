@@ -49,6 +49,45 @@ public class JacobTestCases {
         singlePlayerBowlingScoreboard.recordRoll(2);
 
 
+        assertEquals(2, singlePlayerBowlingScoreboard.getCurrentFrame());
+        assertEquals(2, singlePlayerBowlingScoreboard.getCurrentBall());
+
+        assertEquals(10, singlePlayerBowlingScoreboard.getScore(2));
+
+        System.out.println(singlePlayerBowlingScoreboard.toString());
+
     }
+
+    @Test
+    public void noRollsScore(){
+        assertEquals(0, singlePlayerBowlingScoreboard.getScore(1));
+
+        assertEquals(1, singlePlayerBowlingScoreboard.getCurrentBall());
+    }
+
+    @Test
+    public void earlierFrameScoreTest(){
+
+        singlePlayerBowlingScoreboard.recordRoll(5);
+
+        singlePlayerBowlingScoreboard.recordRoll(3);
+
+        singlePlayerBowlingScoreboard.recordRoll(2);
+
+        singlePlayerBowlingScoreboard.recordRoll(3);
+
+        singlePlayerBowlingScoreboard.recordRoll(6);
+
+        singlePlayerBowlingScoreboard.recordRoll(1);
+
+        assertEquals(4, singlePlayerBowlingScoreboard.getCurrentFrame());
+
+        assertEquals(13, singlePlayerBowlingScoreboard.getScore(2));
+
+        System.out.println(singlePlayerBowlingScoreboard.toString());
+
+    }
+
+
 
 }

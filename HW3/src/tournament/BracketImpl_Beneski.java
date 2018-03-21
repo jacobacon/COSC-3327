@@ -16,6 +16,7 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 
     @Override
     public int getMaxLevel() {
+        //Gets the maximum level
         int unique = getNumberUniqueParticipants();
         //The top level is the sqrt of the unique participants. The total number of levels is max+1.
         return (int) Math.sqrt(unique);
@@ -26,6 +27,7 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
         assert level < getMaxLevel() : "Level: " + level + " Must be <= Max Level: " + getMaxLevel();
         Set<Set<P>> returnSet = new HashSet<>();
 
+        //Get the right number of groupings and how big they are based on level.
         int numParticipants = getNumberUniqueParticipants();
 
         int numGroupings = ((numParticipants / (int) Math.pow(2, level)));
@@ -36,10 +38,12 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 
         int index = predictions.size() - numParticipants;
 
+        //While there are more groupings to make.
         while (groupingCount < numGroupings) {
             //System.out.println("Grouping: " + groupingCount);
             Set<P> tempSet = new HashSet<>();
             int participantCount = 0;
+            //Iterate through predictions
             while (participantCount < groupingSize) {
                 //System.out.println("Participant: " + participantCount + " " + predictions.get(index));
                 tempSet.add(predictions.get(index));
@@ -60,9 +64,9 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
         //Get last index, check if there is a winning parent index, delete any that don't exist under a winner
 
         boolean found = false;
-        for(int i = 0; i < getMaxLevel(); i++){
-            if(getGroupings(i).contains(grouping)){
-               found = true;
+        for (int i = 0; i < getMaxLevel(); i++) {
+            if (getGroupings(i).contains(grouping)) {
+                found = true;
             }
         }
 
@@ -73,7 +77,8 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 
         List<P> returnList = new ArrayList<>(tempList);
 
-        for (P participant: tempList) {
+        //For each participant, check if they won or lost.
+        for (P participant : tempList) {
             boolean eliminated = false;
 
             int numGroups = getNumberUniqueParticipants() / grouping.size();
@@ -86,13 +91,13 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 
             int level = 0;
             int index = getParentIndex(getStartingParticipantIndex(participant));
-            while(!eliminated && level < maxLevel){
+            while (!eliminated && level < maxLevel) {
                 //System.out.println(participant + " at: " + index);
                 //System.out.println(getStartingParticipantIndex(participant));
                 //System.out.println(predictions.get(index));
 
 
-                if((predictions.get(index) != participant) && (predictions.get(index) != null)){
+                if ((predictions.get(index) != participant) && (predictions.get(index) != null)) {
                     returnList.remove(participant);
                     eliminated = true;
                 }
@@ -110,6 +115,8 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
         assert predictions.contains(participant) : "Predictions list doesn't contain participant";
         assert exactWinCount >= 0 : "Exact win must be >= 0";
         assert exactWinCount <= getMaxLevel() : "Exact win must be <= max level";
+
+        //For each participant set a win at the parent index.
         for (int i = 0; i < exactWinCount; i++) {
             int newIndex = getParentIndex(getParticipantIndex(participant));
 
@@ -118,13 +125,14 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
         }
     }
 
-    private int getStartingParticipantIndex(P participant){
-        assert(predictions.contains(participant)) : "Participant Must be included in predictions";
+    private int getStartingParticipantIndex(P participant) {
+        //Get index of participant on the base level.
+        assert (predictions.contains(participant)) : "Participant Must be included in predictions";
         int startingIndex = predictions.size() - getNumberUniqueParticipants();
         int index = 0;
 
-        for(int i = startingIndex; i < predictions.size(); i++){
-            if(predictions.get(i) == participant)
+        for (int i = startingIndex; i < predictions.size(); i++) {
+            if (predictions.get(i) == participant)
                 index = i;
         }
         return index;
@@ -143,7 +151,9 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 		System.out.println("Index of participant: " + index);
 		return index;
 		*/
-        assert(predictions.contains(participant)) : "Participant Must be included in predictions";
+
+        //Get the first index of participant
+        assert (predictions.contains(participant)) : "Participant Must be included in predictions";
         int index = predictions.indexOf(participant);
         //System.out.println("Index of part: " + index);
         return index;
@@ -206,12 +216,12 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 
             Bracket<P> otherBracket = (Bracket<P>) obj;
 
-            if(getMaxLevel() != otherBracket.getMaxLevel()){
+            if (getMaxLevel() != otherBracket.getMaxLevel()) {
                 return false;
             }
 
-            for(int i = 0; i < getMaxLevel(); i++){
-                if(getGroupings(i).equals(otherBracket.getGroupings(i))){
+            for (int i = 0; i < getMaxLevel(); i++) {
+                if (getGroupings(i).equals(otherBracket.getGroupings(i))) {
                     equal = true;
                 }
 
@@ -219,23 +229,23 @@ public class BracketImpl_Beneski<P> extends BracketAbstract<P> {
 
                 List<Set<P>> otherGroupings = new ArrayList<>(otherBracket.getGroupings(i));
 
-                if(groupings.size() != otherGroupings.size()){
+                if (groupings.size() != otherGroupings.size()) {
                     return false;
                 }
 
-                for(int j = 0; j < groupings.size(); j++){
+                for (int j = 0; j < groupings.size(); j++) {
                     Set<P> group = groupings.get(j);
 
-                    if(!otherGroupings.contains(group)){
+                    if (!otherGroupings.contains(group)) {
                         return false;
                     }
                 }
 
-                for(int j = 0; j < groupings.size(); j++){
+                for (int j = 0; j < groupings.size(); j++) {
                     Set<P> group = groupings.get(j);
                     Set<P> otherGroup = otherGroupings.get(j);
 
-                    if(getViableParticipants(group) == otherBracket.getViableParticipants(otherGroup)){
+                    if (getViableParticipants(group) == otherBracket.getViableParticipants(otherGroup)) {
                         equal = true;
                     }
 

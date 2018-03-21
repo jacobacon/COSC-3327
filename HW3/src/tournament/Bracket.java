@@ -29,6 +29,7 @@ public interface Bracket<P>
 	//						==> !rv.contains(t)
 	 
 	public Set<P> getViableParticipants(Set<P> grouping);
+
 	//part of pre: participant != null
 	//part of pre: participant is in getGroupings(getMaxLevel()).iterator().next()
 	//part of pre: 0 <= exactWinCount

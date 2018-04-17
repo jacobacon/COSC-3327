@@ -3,7 +3,7 @@ package combinatorics;
 
 import java.util.*;
 
-public class PermutationImpl<E> implements Permutation<E> {
+public class PermutationImpl_Beneski<E> implements Permutation<E> {
 
     private Set<E> domain;
     private Set<List<E>> cycles;
@@ -11,21 +11,24 @@ public class PermutationImpl<E> implements Permutation<E> {
     private Map<E, E> values = new HashMap<>();
 
 
-    public PermutationImpl(Set<List<E>> cycles){
-        //TODO
+    public PermutationImpl_Beneski(Set<List<E>> cycles){
+        domain = new HashSet<>();
+
         this.cycles = cycles;
 
         for (List<E> cycle: cycles) {
+
+            System.out.println(cycle);
+
+            domain.addAll(cycle);
+
             for (int i = 1; i < cycle.size(); i++) {
 
-                //TODO Use a better way than this.
-                domain.add(cycle.get(i-1));
-                domain.add(cycle.get(i));
+                System.out.println(cycle.get(i-1));
+                System.out.println(cycle.get(i));
 
                 values.put(cycle.get(i-1), cycle.get(i));
 
-                //System.out.println(cycle.get(i-1));
-                //System.out.println(cycle.get(i));
             }
 
             values.put(cycle.get(cycle.size() - 1), cycle.get(0));
@@ -33,7 +36,7 @@ public class PermutationImpl<E> implements Permutation<E> {
         }
     }
 
-    public PermutationImpl(Set<List<E>> cycles, Set<E> domain){
+    public PermutationImpl_Beneski(Set<List<E>> cycles, Set<E> domain){
         this.cycles = cycles;
         this.domain = domain;
         //TODO add cycles from domain
@@ -54,9 +57,17 @@ public class PermutationImpl<E> implements Permutation<E> {
         //System.out.println("The Map Contains: " + values.toString());
     }
 
+    public PermutationImpl_Beneski(Map<E,E> map){
+        this.values = map;
+
+        domain = map.keySet();
+    }
+
     @Override
     public E getPreImage(E element) {
-        //TODO double check
+
+        assert getDomain().contains(element): "Element not in domain";
+
         Map<E, E> reverseMap = new HashMap<>();
 
         for (Map.Entry<E, E> value: values.entrySet()) {
@@ -74,6 +85,7 @@ public class PermutationImpl<E> implements Permutation<E> {
 
     @Override
     public E getImage(E element) {
+        assert getDomain().contains(element): "Element not in domain";
         return values.get(element);
     }
 

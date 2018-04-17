@@ -8,15 +8,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import dartboard.DartboardUtils_Beneski;
 import org.junit.Test;
 
 import combinatorics.Permutation;
-import combinatorics.PermutationImpl;
+import combinatorics.PermutationImpl_Beneski;
 
 import dartboard.Dartboard;
-import dartboard.DartboardImpl;
+import dartboard.DartboardImpl_Beneski;
 
-public class DartboardTestCasesSubset_STUDENTS
+public class DartboardTestCasesSubset_Beneski
 {	
 	@Test(expected=AssertionError.class)
 	public void assertionsEnabledTest()
@@ -35,7 +36,7 @@ public class DartboardTestCasesSubset_STUDENTS
 		
 		Set<Integer> domain = getAllElements(cycles);
 		Permutation<Integer> permutation = getPermutation(cycles, domain);
-		Dartboard dartboard = new DartboardImpl(permutation, 2);
+		Dartboard dartboard = new DartboardImpl_Beneski(permutation, 2);
 		
 		Set<Integer> desiredDartboardNumbersSet = new HashSet<Integer>(Arrays.asList(new Integer[]{1, 2, 3}));
 		assertEquals(desiredDartboardNumbersSet, dartboard.getNumbers());
@@ -45,6 +46,36 @@ public class DartboardTestCasesSubset_STUDENTS
 		assertEquals(new Integer(3), (Integer)dartboard.getClockwiseAdjacentNumber(1));
 		assertEquals(new Integer(1), (Integer)dartboard.getClockwiseAdjacentNumber(2));
 		assertEquals(new Integer(2), (Integer)dartboard.getClockwiseAdjacentNumber(3));
+	}
+
+	@Test
+	public void getNumber(){
+		Set<List<Integer>> cycles = new HashSet<List<Integer>>();
+		List<Integer> soleCycle = (Arrays.asList(new Integer[]{3, 2, 1, 4,6,7,9}));
+		cycles.add(soleCycle);
+
+		Set<Integer> domain = getAllElements(cycles);
+		Permutation<Integer> permutation = getPermutation(cycles, domain);
+		Dartboard dartboard = new DartboardImpl_Beneski(permutation, 2);
+
+		System.out.println(DartboardUtils_Beneski.getIntegerAtPosition(dartboard, 16));
+
+	}
+
+	@Test
+	public void testGetPermutation(){
+		Set<List<Integer>> cycles = new HashSet<List<Integer>>();
+		List<Integer> soleCycle = (Arrays.asList(new Integer[]{3, 2, 1, 4,6,7,9}));
+		cycles.add(soleCycle);
+
+		Set<Integer> domain = getAllElements(cycles);
+		Permutation<Integer> permutation = getPermutation(cycles, domain);
+		Dartboard dartboard = new DartboardImpl_Beneski(permutation, 2);
+
+
+		assert(DartboardUtils_Beneski.getPermutation(dartboard).getDomain().containsAll(domain));
+
+		System.out.println(DartboardUtils_Beneski.getPermutation(dartboard).getDomain());
 	}
 	
 	@Test
@@ -62,7 +93,9 @@ public class DartboardTestCasesSubset_STUDENTS
 		
 		Set<Integer> domain = getAllElements(cycles);
 		Permutation<Integer> permutation = getPermutation(cycles, domain);
-		Dartboard dartboard = new DartboardImpl(permutation, dartboardNumbers[0]);
+		Dartboard dartboard = new DartboardImpl_Beneski(permutation, dartboardNumbers[0]);
+
+		System.out.println(dartboard.toString());
 		
 		Set<Integer> desiredDartboardNumbersSet = new HashSet<Integer>(Arrays.asList(dartboardNumbers));
 		assertEquals(desiredDartboardNumbersSet, dartboard.getNumbers());
@@ -87,7 +120,7 @@ public class DartboardTestCasesSubset_STUDENTS
 	
 	private static <E> Permutation<E> getPermutation(Set<List<E>> cycles, Set<E> domain)
 	{
-		return new PermutationImpl<E>(cycles, domain);
+		return new PermutationImpl_Beneski<E>(cycles, domain);
 	}
 	
 	private static <E> Set<E> getAllElements(Set<List<E>> setOfLists)

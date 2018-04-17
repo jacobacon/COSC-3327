@@ -1,8 +1,8 @@
 package tests;
 
 import combinatorics.Permutation;
-import combinatorics.PermutationImpl;
-import combinatorics.PermutationUtils;
+import combinatorics.PermutationImpl_Beneski;
+import combinatorics.PermutationUtils_Beneski;
 import org.junit.Test;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 
-public class PermutationTestCasesSubset_STUDENTS
+public class PermutationTestCasesSubset_Beneski
 {
 	@Test(expected=AssertionError.class)
 	public void assertionsEnabledTest()
@@ -35,6 +35,25 @@ public class PermutationTestCasesSubset_STUDENTS
 		Set<Integer> desiredDomain = new HashSet<Integer>(Arrays.asList(new Integer[]{1,2,3,4,5}));
 		assertEquals(desiredDomain, permutation.getDomain());
 	}
+
+	@Test
+	public void domain2(){
+		Set<List<Integer>> cycles = new HashSet<List<Integer>>();
+		List<Integer> cycle = Arrays.asList(new Integer[]{3,5,7,9});
+		cycles.add(cycle);
+		cycle = Arrays.asList(new Integer[]{1,2,4,8});
+		cycles.add(cycle);
+		cycle = Arrays.asList(new Integer[]{6});
+		cycles.add(cycle);
+
+		Set<Integer> domain = getAllElements(cycles);
+		Permutation<Integer> permutation = getPermutation(cycles, domain);
+		assertEquals(domain, permutation.getDomain());
+
+		//TODO
+	}
+
+
 	
 	@Test
 	public void straightforwardPermutation()
@@ -76,7 +95,7 @@ public class PermutationTestCasesSubset_STUDENTS
 		
 		Set<Integer> desiredDomain = new HashSet<Integer>(Arrays.asList(new Integer[]{1,2,3,4,5,6,7,8,9}));
 		
-		Permutation<Integer> inversePermutation = PermutationUtils.getInverse(permutation);
+		Permutation<Integer> inversePermutation = PermutationUtils_Beneski.getInverse(permutation);
 		
 		assertEquals(new Integer(5), permutation.getImage(3));
 		assertEquals(new Integer(7), permutation.getImage(5));
@@ -124,14 +143,32 @@ public class PermutationTestCasesSubset_STUDENTS
 
 		List<Integer> desiredCycle = Arrays.asList(new Integer[]{3,5,7,9});
 
-		assertTrue(PermutationUtils.getCycle(permutation, 3).containsAll(desiredCycle));
+		assertTrue(PermutationUtils_Beneski.getCycle(permutation, 3).containsAll(desiredCycle));
 
 		desiredCycle = Arrays.asList(new Integer[]{6});
 
-		assertTrue(PermutationUtils.getCycle(permutation, 6).containsAll(desiredCycle));
+		assertTrue(PermutationUtils_Beneski.getCycle(permutation, 6).containsAll(desiredCycle));
 
 
 	}
+
+	/*
+	@Test
+	public void testIsCyclic(){
+		Set<List<Integer>> cycles = new HashSet<List<Integer>>();
+		List<Integer> cycle = Arrays.asList(new Integer[]{3,5,7,9});
+		cycles.add(cycle);
+		cycle = Arrays.asList(new Integer[]{1,2,4,8});
+		cycles.add(cycle);
+		cycle = Arrays.asList(new Integer[]{6});
+		cycles.add(cycle);
+
+		Set<Integer> domain = getAllElements(cycles);
+		Permutation<Integer> permutation = getPermutation(cycles, domain);
+
+		assertTrue(PermutationUtils_Beneski.isCyclic(permutation));
+	}
+*/
 
 	@Test
 	public void testPreImage(){
@@ -152,7 +189,7 @@ public class PermutationTestCasesSubset_STUDENTS
 	
 	private static <E> Permutation<E> getPermutation(Set<List<E>> cycles, Set<E> domain)
 	{
-		return new PermutationImpl<>(cycles, domain);
+		return new PermutationImpl_Beneski<>(cycles, domain);
 	}
 	
 	private static <E> Set<E> getAllElements(Set<List<E>> setOfLists)

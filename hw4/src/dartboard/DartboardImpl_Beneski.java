@@ -6,12 +6,12 @@ import combinatorics.Permutation;
 
 import java.util.Set;
 
-public class DartboardImpl implements Dartboard {
+public class DartboardImpl_Beneski implements Dartboard {
 
     int topNumber;
     Permutation<Integer> permutation;
 
-    public DartboardImpl(Permutation<Integer> p, int topmostNumber){
+    public DartboardImpl_Beneski(Permutation<Integer> p, int topmostNumber){
         assert p.getDomain().contains(topmostNumber) : "Top Number not in Domain of Permutation";
         permutation = p;
         this.topNumber = topmostNumber;
@@ -29,6 +29,7 @@ public class DartboardImpl implements Dartboard {
 
     @Override
     public int getClockwiseAdjacentNumber(int number) {
+        assert permutation.getDomain().contains(number) : "Number not in domain!";
         return permutation.getImage(number);
     }
 
@@ -37,10 +38,16 @@ public class DartboardImpl implements Dartboard {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        stringBuilder.append(topNumber);
+        int numEntries = getNumbers().size();
 
+        Integer number = getTopmostNumber();
 
+        stringBuilder.append(number + " -> ");
 
+        for(int i = 0; i < numEntries; i ++){
+            number = getClockwiseAdjacentNumber(number);
+            stringBuilder.append(number + " -> ");
+        }
 
         return stringBuilder.toString();
     }

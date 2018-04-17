@@ -1,8 +1,9 @@
 package combinatorics;
 
+
 import java.util.*;
 
-public class PermutationUtils
+public class PermutationUtils_Beneski
 {
 	public static <E> List<E> getCycle(Permutation<E> permutation, E e){
 		assert permutation.getDomain().contains(e): "Element is not in the Domain of the Permutation";
@@ -46,7 +47,7 @@ public class PermutationUtils
 
 
 		}
-		Permutation<E> reversePermutation = new PermutationImpl<>(cycles, domain);
+		Permutation<E> reversePermutation = new PermutationImpl_Beneski<>(cycles, domain);
 
 		return reversePermutation;
 	}
@@ -55,6 +56,8 @@ public class PermutationUtils
 	//post: rv = permutation1*permutation2, that is, 
 	//rv.getImage(e) = permutation1.getImage(permutation2.getImage(e)) for all e in permutation2.getDomain()
 	public static <E> Permutation<E> compose(Permutation<E> permutation1, Permutation<E> permutation2){
+
+		assert(permutation2.getDomain().containsAll(permutation1.getDomain())) : "Permutation 2 Must Contain all of Permutation 1";
 
 		Set<E> domain = permutation2.getDomain();
 
@@ -68,8 +71,9 @@ public class PermutationUtils
 			map.put(value, item);
 
 		}
-		//TODO
-		return null;
+
+		return new PermutationImpl_Beneski(map);
+
 	}
 	
 	//part of post: rv = "permutation.getImage(e) != e
@@ -77,6 +81,26 @@ public class PermutationUtils
 	public static <E> boolean isCyclic(Permutation<E> permutation){
 
 		boolean cyclic = false;
+
+		int numElements = permutation.getDomain().size();
+
+		List<E> elementsList = new ArrayList<>(permutation.getDomain());
+
+		E firstValue = elementsList.get(0);
+
+		E checkValue = firstValue;
+
+		for(int i = 0; i < numElements; i++){
+
+			checkValue = permutation.getImage(checkValue);
+
+			System.out.println(checkValue);
+
+			if((i == numElements-1) && (checkValue == firstValue)){
+				cyclic = true;
+			}
+
+		}
 
 		//TODO
 

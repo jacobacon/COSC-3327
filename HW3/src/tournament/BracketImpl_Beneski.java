@@ -1,8 +1,6 @@
 package tournament;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

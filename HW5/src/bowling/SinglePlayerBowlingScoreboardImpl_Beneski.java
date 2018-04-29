@@ -21,6 +21,7 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         return playerName;
     }
 
+    /*
     public int getCurrentFrame() {
         assert !isGameOver() : "Game is over!";
 
@@ -29,7 +30,7 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         //If there hasn't been any rolls yet, the frame is 0
         if ((rollCount == 0) || ((rollCount == 1) && (pinsKnockedDownArray[0] != 10))) {
 
-            System.out.println("Has to be frame 1");
+            //System.out.println("Has to be frame 1");
             frameCount = 1;
 
             //There are two rolls for each frame, and add one to get to the next frame
@@ -39,17 +40,17 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
 
             while (searchRoll < rollCount-1){
 
-                System.out.println("Pins: "  + pinsKnockedDownArray[searchRoll]);
-                System.out.println("Search Roll: " + searchRoll);
+                //System.out.println("Pins: "  + pinsKnockedDownArray[searchRoll]);
+                //System.out.println("Search Roll: " + searchRoll);
 
 
                 if(pinsKnockedDownArray[searchRoll] == 10){
-                    System.out.println("Strike!");
+                    //System.out.println("Strike!");
                     searchRoll++;
                     frameCount++;
                 } else {
-                    System.out.println("Not! " + pinsKnockedDownArray[searchRoll]);
-                    System.out.println("Search Roll Inside: " + searchRoll);
+                    //System.out.println("Not! " + pinsKnockedDownArray[searchRoll]);
+                    //System.out.println("Search Roll Inside: " + searchRoll);
                     searchRoll+=2;
 
                     frameCount++;
@@ -57,27 +58,28 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
 
             }
 
-            /*
-
-            for(int i = 0; i < rollCount; i++){
-                System.out.println(pinsKnockedDownArray[i] + " " + rollCount);
-
-                if(pinsKnockedDownArray[i] == 10){
-                    frameCount++;
-                } else {
-                    frameCount += 2;
-                }
-
-            }
-
-            */
-
         }
 
         //System.out.println("Frame count: " + frameCount);
 
         return frameCount;
 
+    }
+*/
+
+    public int getCurrentFrame(){
+        assert !isGameOver() : "Game is already over";
+
+        int currentFrame;
+        if((rollCount + getNumStrikes() +1) % 2 == 0)
+        {
+            currentFrame = ((rollCount + getNumStrikes() + 1) / 2);
+        }
+        else
+        {
+            currentFrame = ((rollCount + 1 + getNumStrikes()) / 2) + 1;
+        }
+        return currentFrame;
     }
 
     public Mark getMark(int frameNumber, int boxIndex) {
@@ -100,9 +102,6 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         assert frameNumber <= 9 : "frameNumber = " + frameNumber + " > 9!";
         assert 1 <= boxIndex : "boxIndex = " + boxIndex + " < 1!";
         assert boxIndex <= 2 : "boxIndex = " + boxIndex + " > 2!";
-
-        //Works for 1-9, but not strikes.
-
 
 
         Mark mark;
@@ -139,16 +138,6 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         assert 1 <= boxIndex : "boxIndex = " + boxIndex + " < 1!";
         assert boxIndex <= 3 : "boxIndex = " + boxIndex + " > 3!";
 
-        /*
-        int startingIndex = getRollIndexOfFirstBall(10);
-        int tenthFrameScore = pinsKnockedDownArray[startingIndex];
-        tenthFrameScore += pinsKnockedDownArray[startingIndex+1];
-
-        if((Mark.translate(pinsKnockedDownArray[startingIndex+1]) == Mark.STRIKE) || (Mark.translate(pinsKnockedDownArray[startingIndex+1]) == Mark.SPARE)){
-            tenthFrameScore += pinsKnockedDownArray[startingIndex+2];
-        }
-
-*/
         Mark mark = null;
 
         switch (boxIndex){
@@ -176,14 +165,24 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         assert 1 <= frameNumber : "frameNumber = " + frameNumber + " < 1!";
         assert frameNumber <= 10 : "frameNumber = " + frameNumber + " > 10!";
 
+        int score = 0;
+        //Score starts at 0
 
-            //Score starts at 0
-            int score = 0;
 
-            //Add every roll to score, up until the frame number
-            for (int i = 0; i < frameNumber * 2; i++) {
-                score += pinsKnockedDownArray[i];
-            }
+        //Add every roll to score, up until the frame number
+        for (int i = 0; i < frameNumber * 2; i++) {
+            score += pinsKnockedDownArray[i];
+        }
+
+        if(frameNumber == 10){
+            if(pinsKnockedDownArray[getRollIndexOfFirstBall(10) + 1] == 10)
+            score += pinsKnockedDownArray[getRollIndexOfFirstBall(10) + 2];
+        }
+
+        if(isStrike(frameNumber) || isSpare(frameNumber)){
+            score += pinsKnockedDownArray[getRollIndexOfFirstBall(frameNumber)];
+        }
+
 
         return score;
     }
@@ -193,7 +192,19 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         //Dr. Kart's bowler gets tired easy, he will never get to frame 10
         boolean gameOver = false;
 
-
+        if(rollCount == MAXIMUM_ROLLS){
+            gameOver = true;
+        } else {
+            if((rollCount + getNumStrikes()) == 20){
+                if(!isStrikeOrSpare(getMark(10,2)))
+                    gameOver = true;
+                else {
+                    if(rollCount + getNumStrikes() == 21 ){
+                        gameOver = true;
+                    }
+                }
+            }
+        }
 
         //TODO Check for if the game really is over.
 
@@ -216,29 +227,37 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
         assert !isGameOver() : "Game is over!";
 
         //Works for 1-9, but not frame 10
+        int currentBall;
+
+        if(getCurrentFrame() <= 9) {
+
+            //System.out.println("Roll Count: " + rollCount);
+            //System.out.println("Current frame " + getCurrentFrame());
+
+            int numStrikes = getNumStrikes();
 
 
+            //numStrikes has already been counted once, we add it again to 'normalize' to two rolls per frame.
+            int biasedRollCount = rollCount + numStrikes;
 
-        //System.out.println("Roll Count: " + rollCount);
-        //System.out.println("Current frameL " + getCurrentFrame());
 
-        int numStrikes = 0;
+            //Gives previous ball
+            currentBall = biasedRollCount % 2;
 
-        for(int i = 0; i < rollCount; i++){
-            if(pinsKnockedDownArray[i] == 10)
-                numStrikes++;
+            //Change to current ball
+            currentBall++;
+        } else {
+
+            if(isStrikeOrSpare(getMark(10, 2))){
+                currentBall = 3;
+            } else {
+                int biasedRollCount = rollCount + getNumStrikes();
+
+                currentBall = biasedRollCount % 2;
+
+                currentBall++;
+            }
         }
-
-
-        //numStrikes has already been counted once, we add it again to 'normalize' to two rolls per frame.
-        int biasedRollCount = rollCount + numStrikes;
-
-        //TODO
-        //Gives previous ball
-        int currentBall = biasedRollCount % 2;
-
-        //Change to current ball
-        currentBall++;
 
         return currentBall;
     }
@@ -385,6 +404,17 @@ public class SinglePlayerBowlingScoreboardImpl_Beneski implements SinglePlayerBo
 
     private boolean isStrikeOrSpare(Mark mark) {
         return ((mark == Mark.STRIKE) || (mark == Mark.SPARE));
+    }
+
+    private int getNumStrikes(){
+        int numStrikes = 0;
+
+        for(int i = 0; i < rollCount; i++){
+            if(pinsKnockedDownArray[i] == 10)
+                numStrikes++;
+        }
+
+        return numStrikes;
     }
 
     //*************************************************

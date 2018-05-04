@@ -6,6 +6,7 @@ import static keyboard.KeyLayout.DVORAK;
 import static keyboard.KeyLayout.QWERTY;
 import static keyboard.KeyLayout.ROTATION_13;
 
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,7 +17,7 @@ import java.util.Set;
 
 import combinatorics.Permutation;
 import combinatorics.PermutationImpl_Beneski;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+
 
 /**
  * @author skeleton
@@ -55,7 +56,7 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 		this.homeKey = keyLayoutToHomeKeyMap.get(keyLayout);
 		Map<Key, Set<Key>> keyToNeighborsMap = keyLayoutToKeyToNeighborMapMap.get(keyLayout);
 
-		System.out.println(keyToNeighborsMap);
+		//System.out.println(keyToNeighborsMap);
 		init(keyToNeighborsMap, new ArrayList<Key>(keyToNeighborsMap.keySet()));
 	}
 	
@@ -63,7 +64,7 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 	{
 		this.vertexLabels = vertexLabels;
 		this.adjacencyMatrix = getAdjacencyMatrix(physicalKeyToNeighborsMap, vertexLabels);
-		//this.distanceMatrix = getDistanceMatrix(adjacencyMatrix);
+		this.distanceMatrix = getDistanceMatrix(adjacencyMatrix);
 	}
 	
 	private static int[][] getAdjacencyMatrix(Map<Key, Set<Key>> physicalKeyToNeighborsMap, List<Key> vertexLabels)
@@ -74,7 +75,7 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 
 		int numCharacters = vertexLabels.size();
 
-		System.out.println(vertexLabels + " " + numCharacters);
+		//System.out.println(vertexLabels + " " + numCharacters);
 
 		for(int i = 0; i < numCharacters; i++){
 			for(int j = 0; j < numCharacters; j++){
@@ -87,17 +88,10 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 				}
 			}
 		}
-		
-		//build adjacencyMatrix here...
 
-		/*
-		for(int i = 0; i < numCharacters; i++){
-			for(int j = 0; j < numCharacters; j++){
-				System.out.print(adjacencyMatrix[i][j]);
-			}
-			System.out.println("\n");
-		}
-		*/
+		//System.out.println("Adjacency");
+		//System.out.println(vertexLabels);
+		//printMatrix(adjacencyMatrix);
 		
 		return adjacencyMatrix;
 	}
@@ -128,8 +122,55 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 		assert vertexCount > 0 : "rowCount = 0!";
 		
 		int[][] distanceMatrix = new int[vertexCount][vertexCount];
-		
-		//Figure out distanceMatrix here...
+
+		int[][] tempMatrix = new int[vertexCount][vertexCount];
+
+		//Setup Distance Matrix to be full of -1, and a temp matrix we can multiply by the adj matrix to make powers of A^K
+
+		for(int i = 0; i < vertexCount; i++){
+			for(int j = 0; j < vertexCount; j++){
+
+				distanceMatrix[i][j] = -1;
+				tempMatrix[i][j] = adjacencyMatrix[i][j];
+
+				if(i == j){
+					tempMatrix[i][j] = 0;
+				}
+
+			}
+		}
+
+
+
+		int k = 1; //K is the power of the matrix, and the length of each path
+
+		while (k <= 14){
+
+
+			for(int i = 0; i < vertexCount; i ++){
+				for(int j = 0; j < vertexCount; j++){
+
+					if((tempMatrix[i][j] > 0) && (distanceMatrix[i][j] == -1)){
+						distanceMatrix[i][j] = k;
+					}
+
+					if(i == j){
+						distanceMatrix[i][j] = 0;
+					}
+				}
+			}
+
+			//Incirment the power of the temp matrix, which holds the length of path K from I,J
+			tempMatrix = multiply(tempMatrix, adjacencyMatrix);
+
+			k++;
+		}
+
+
+
+
+		//System.out.println("Distance");
+		//printMatrix(distanceMatrix);
 		
 		return distanceMatrix;
 	}
@@ -162,8 +203,16 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 	public double getDistance(String str) {
 		double distance = 0;
 		Key currentKey = homeKey;
-		
-		//Calculate distance here
+
+		for(int i = 0; i < str.length(); i++){
+			Set<Key> keySet = getKeySet(str.charAt(i));
+
+			Key [] keyArray = keySet.toArray(new Key[1]);
+
+			distance += getDistance(currentKey, keyArray[0]);
+
+			currentKey = keyArray[0];
+		}
 		
 		return distance;
 	}
@@ -200,6 +249,16 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 		
 		//Produce keyToNeighborSetMap here
 		//You might want to take a look at getSet()
+
+		//Test with a smaller subset.
+/*
+		keyToNeighborSetMap.put(A,getSet(B));
+		keyToNeighborSetMap.put(B,getSet(A,C));
+		keyToNeighborSetMap.put(C,getSet(B,D));
+		keyToNeighborSetMap.put(D,getSet(C,E));
+		keyToNeighborSetMap.put(E,getSet(D));
+
+*/
 
 
 		keyToNeighborSetMap.put(A, getSet(Q, W, S, Z, SHIFT_1));
@@ -246,7 +305,20 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 		keyToNeighborSetMap.put(SPACEBAR_3,getSet(B));
 		keyToNeighborSetMap.put(SPACEBAR_4,getSet(N));
 		keyToNeighborSetMap.put(SPACEBAR_5,getSet(M));
+		keyToNeighborSetMap.put(COMMA,getSet(M, K,L,PERIOD));
+		keyToNeighborSetMap.put(PERIOD,getSet(COMMA,L,SEMICOLON,FORESLASH));
+		keyToNeighborSetMap.put(FORESLASH,getSet(PERIOD,SEMICOLON,TICK,SHIFT_2));
+		keyToNeighborSetMap.put(SHIFT_2,getSet(FORESLASH,TICK,RETURN));
+		keyToNeighborSetMap.put(SEMICOLON,getSet(TICK,LEFT_BRACKET,P,L,PERIOD,FORESLASH));
+		keyToNeighborSetMap.put(TICK,getSet(LEFT_BRACKET,SEMICOLON,RETURN,R,SHIFT_2,FORESLASH));
+		keyToNeighborSetMap.put(RETURN,getSet(SHIFT_2,TICK,RIGHT_BRACKET,BACKSLASH));
+		keyToNeighborSetMap.put(LEFT_BRACKET,getSet(P,MINUS,EQUALS,SEMICOLON,TICK, RIGHT_BRACKET));
+		keyToNeighborSetMap.put(RIGHT_BRACKET,getSet(LEFT_BRACKET,EQUALS,TICK,RETURN,BACKSLASH));
+		keyToNeighborSetMap.put(BACKSLASH,getSet(RIGHT_BRACKET,RETURN));
+		keyToNeighborSetMap.put(MINUS,getSet(O,P,LEFT_BRACKET,EQUALS));
+		keyToNeighborSetMap.put(EQUALS,getSet(MINUS,LEFT_BRACKET,RIGHT_BRACKET));
 
+		assert (keyToNeighborSetMap.keySet().size() == 56);
 
 
 		
@@ -293,6 +365,17 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 
 		//Ex: map = {C -> {A, E}, A -> {C, B, D}, B -> {A}, D -> {A}, E -> {C}}, permutation(A) = B, permutation(B) = C, permutation(C) = A
 		return newMap;
+	}
+
+	private static void printMatrix(int[][] matrix){
+
+		for(int i = 0; i < matrix.length; i++){
+			for(int j = 0; j < matrix[i].length; j++){
+				System.out.print(matrix[i][j] + " ");
+			}
+			System.out.println("\n");
+		}
+
 	}
 
 }

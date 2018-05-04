@@ -26,6 +26,18 @@ public class KeyboardLayoutAllTests_STUDENT
 		KeyboardMetrics keyboardMetrics = getKeyboardMetrics(KeyLayout.QWERTY);
 		assertEquals(0.0, keyboardMetrics.getDistance("jjjjjjjjjjjjjjjjjj"), 0.0);
 	}
+
+	@Test
+	public void testTwoCharacters(){
+		KeyboardMetrics keyboardMetrics = getKeyboardMetrics(KeyLayout.QWERTY);
+		assertEquals(1.0, keyboardMetrics.getDistance(Q, W), 0.0);
+	}
+
+	@Test
+	public void testFromJTo(){
+		KeyboardMetrics keyboardMetrics = getKeyboardMetrics(KeyLayout.QWERTY);
+		assertEquals(3, keyboardMetrics.getDistance("jhgf"), 0.0);
+	}
 	
 	@Test
 	public void shiftTestQwerty()

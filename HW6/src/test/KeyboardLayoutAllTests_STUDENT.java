@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import keyboard.AppleNumericMB110LLKeyboardMetricsImpl_Skeleton;
+import keyboard.AppleNumericMB110LLKeyboardMetricsImpl_Beneski;
 import keyboard.Key;
 import keyboard.KeyLayout;
 import keyboard.KeyboardMetrics;
@@ -17,7 +17,7 @@ public class KeyboardLayoutAllTests_STUDENT
 {
 	private static KeyboardMetrics getKeyboardMetrics(KeyLayout keyLayout)
 	{
-		return new AppleNumericMB110LLKeyboardMetricsImpl_Skeleton(keyLayout);
+		return new AppleNumericMB110LLKeyboardMetricsImpl_Beneski(keyLayout);
 	}
 	
 	@Test
@@ -53,6 +53,31 @@ public class KeyboardLayoutAllTests_STUDENT
 		KeyboardMetrics keyboardMetrics = getKeyboardMetrics(KeyLayout.QWERTY);
 		String testString = "jkl;\'\n]\n";
 		assertEquals(testString.length() - 1, keyboardMetrics.getDistance(testString), 0.0);
+	}
+
+
+	@Test
+	public void periodToOneTest(){
+		KeyboardMetrics keyboardMetrics = getKeyboardMetrics(KeyLayout.QWERTY);
+
+
+		assertEquals(1, keyboardMetrics.getDistance(PERIOD, L), 0.0);
+
+		assertEquals(1, keyboardMetrics.getDistance(L, O), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(O, NINE), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(NINE, EIGHT), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(EIGHT, SEVEN), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(SEVEN, SIX), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(SIX, FIVE), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(FIVE, FOUR), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(FOUR, THREE), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(THREE, TWO), 0.0);
+		assertEquals(1, keyboardMetrics.getDistance(TWO, ONE), 0.0);
+
+
+		//assertEquals(11, keyboardMetrics.getDistance(PERIOD, ONE), 0.0);
+
+
 	}
 	
 	@Test

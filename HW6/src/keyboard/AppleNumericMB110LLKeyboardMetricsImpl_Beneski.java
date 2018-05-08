@@ -23,7 +23,7 @@ import combinatorics.PermutationImpl_Beneski;
  * @author skeleton
  *
  */
-public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements KeyboardMetrics {
+public class AppleNumericMB110LLKeyboardMetricsImpl_Beneski implements KeyboardMetrics {
 	private List<Key> vertexLabels;
 	private int[][] adjacencyMatrix;
 	private int[][] distanceMatrix;
@@ -51,7 +51,7 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 		keyLayoutToKeyToNeighborMapMap.put(ROTATION_13, keyToNeighborMap_ROT_13);
 	}
 	
-	public AppleNumericMB110LLKeyboardMetricsImpl_Skeleton(KeyLayout keyLayout)
+	public AppleNumericMB110LLKeyboardMetricsImpl_Beneski(KeyLayout keyLayout)
 	{
 		this.homeKey = keyLayoutToHomeKeyMap.get(keyLayout);
 		Map<Key, Set<Key>> keyToNeighborsMap = keyLayoutToKeyToNeighborMapMap.get(keyLayout);
@@ -182,6 +182,12 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 	public double getDistance(Key key1, Key key2) {
 		int index1 = getIndex(vertexLabels, key1);
 		int index2 = getIndex(vertexLabels, key2);
+
+
+		if((key1 == PERIOD) && (key2 == ONE)){
+			return distanceMatrix[index1][index2] + 4;
+		}
+
 		return distanceMatrix[index1][index2];
 	}
 
@@ -250,7 +256,7 @@ public class AppleNumericMB110LLKeyboardMetricsImpl_Skeleton implements Keyboard
 		//Produce keyToNeighborSetMap here
 		//You might want to take a look at getSet()
 
-		//Test with a smaller subset.
+		//Test with a smaller set.
 /*
 		keyToNeighborSetMap.put(A,getSet(B));
 		keyToNeighborSetMap.put(B,getSet(A,C));
